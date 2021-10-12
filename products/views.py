@@ -19,10 +19,10 @@ def index(request):
 def products(request):
     file_path = path.join(MODULE_DIR, 'fixtures/goods.json')
     with open(file_path, encoding='utf-8') as f:
-        goods = load(f)
+        products_list = load(f)
     context = {
         'title': 'GeekShop - Каталог',
         'header': 'GeekShop',
-        'products': goods
+        'products': products_list
     }
     return render(request, 'products/products.html', context)
