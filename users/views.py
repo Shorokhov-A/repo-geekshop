@@ -28,6 +28,7 @@ def registration(request):
     if request.method == 'POST':
         form = UserRegistrationForm(data=request.POST)
         if form.is_valid():
+            form.clean_age()
             form.save()
             return HttpResponseRedirect(reverse('users:login'))
     else:

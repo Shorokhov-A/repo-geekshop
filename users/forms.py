@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.core.exceptions import ValidationError
+from datetime import date
 
 from users.models import User
 
@@ -28,7 +30,18 @@ class UserRegistrationForm(UserCreationForm):
         'class': 'form-control py-4', 'placeholder': 'Введите пароль'}))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control py-4', 'placeholder': 'Подтвердите пароль'}))
+    birthday = forms.DateField(widget=forms.DateInput(attrs={
+        'class': 'form-control py-4', 'placeholder': 'Дата рождения'}))
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')
+        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'birthday')
+
+    def clean_age(self):
+        current_date = date.today()
+        birthday = self.cleaned_data['birthday']
+        age = current_date.year - birthday.year
+        if age < 18:
+            raise ValidationError('Вы слишком молоды!')
+
+        return age
