@@ -30,6 +30,7 @@ def basket_remove(request, basket_id):
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
+@login_required
 def basket_edit(request, basket_id, quantity):
     if request.is_ajax():
         basket = Basket.objects.get(id=basket_id)
