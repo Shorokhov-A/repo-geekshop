@@ -31,7 +31,7 @@ class UserRegistrationForm(UserCreationForm):
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control py-4', 'placeholder': 'Подтвердите пароль'}))
     birthday = forms.DateField(widget=forms.DateInput(attrs={
-        'class': 'form-control py-4', 'placeholder': 'Дата рождения'}), required=False)
+        'class': 'form-control py-4', 'placeholder': 'Дата рождения'}))
 
     class Meta:
         model = User
