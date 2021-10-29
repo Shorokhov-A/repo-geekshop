@@ -17,6 +17,6 @@ def products(request):
         'title': 'GeekShop - Каталог',
         'header': 'GeekShop',
         'categories': ProductCategory.objects.all(),
-        'products': Product.objects.all()
+        'products': Product.objects.all(),
     }
     return render(request, 'products/products.html', context)
