@@ -20,10 +20,20 @@ class UserCreateView(CreateView):
     form_class = UserAdminRegistrationForm
     success_url = reverse_lazy('admins:admin_users')
 
+    def get_context_data(self, **kwargs):
+        context = super(UserCreateView, self).get_context_data(**kwargs)
+        context['title'] = 'GeekShop - Создание пользователей'
+        return context
+
 
 class UserListView(ListView):
     model = User
     template_name = 'admins/admin-users-read.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserListView, self).get_context_data(**kwargs)
+        context['title'] = 'GeekShop - Пользователи'
+        return context
 
 
 class UserUpdateView(UpdateView):
@@ -31,6 +41,11 @@ class UserUpdateView(UpdateView):
     template_name = 'admins/admin-users-update-delete.html'
     form_class = UserAdminProfileForm
     success_url = reverse_lazy('admins:admin_users')
+
+    def get_context_data(self, **kwargs):
+        context = super(UserUpdateView, self).get_context_data(**kwargs)
+        context['title'] = 'GeekShop - Обновление пользователей'
+        return context
 
 
 class UserDeleteView(DeleteView):
