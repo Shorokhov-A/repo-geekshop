@@ -1,18 +1,26 @@
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.base import TemplateView
 
 from users.models import User
 from admins.forms import UserAdminRegistrationForm, UserAdminProfileForm
 
 
-@user_passes_test(lambda u: u.is_staff)
-def index(request):
-    context = {'title': 'GeekShop - Админ панель'}
-    return render(request, 'admins/index.html', context)
+class IndexTemplateView(TemplateView):
+    template_name = 'admins/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexTemplateView, self).get_context_data(**kwargs)
+        context['title'] = 'GeekShop - Админ панель'
+        return context
+
+    @method_decorator(user_passes_test(lambda u: u.is_staff))
+    def dispatch(self, request, *args, **kwargs):
+        return super(IndexTemplateView, self).dispatch(request, *args, **kwargs)
 
 
 class UserCreateView(CreateView):
@@ -75,6 +83,13 @@ class UserDeleteView(DeleteView):
     @method_decorator(user_passes_test(lambda u: u.is_staff))
     def dispatch(self, request, *args, **kwargs):
         return super(UserDeleteView, self).dispatch(request, *args, **kwargs)
+
+
+# @user_passes_test(lambda u: u.is_staff)
+# def index(request):
+#     context = {'title': 'GeekShop - Админ панель'}
+#     return render(request, 'admins/index.html', context)
+
 
 # @user_passes_test(lambda u: u.is_staff)
 # def admin_users(request):
