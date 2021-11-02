@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, CreateView
 from django.urls import reverse, reverse_lazy
 from django.contrib import auth
 from django.contrib import messages
@@ -32,18 +32,24 @@ class LoginFormView(FormView):
             return self.form_invalid(form)
 
 
-def registration(request):
-    if request.method == 'POST':
-        form = UserRegistrationForm(data=request.POST)
+class RegistrationCreateView(CreateView):
+    form_class = UserRegistrationForm
+    template_name = 'users/register.html'
+    success_url = reverse_lazy('users:login')
+
+    def get_context_data(self, **kwargs):
+        context = super(RegistrationCreateView, self).get_context_data(**kwargs)
+        context['title'] = 'GeekShop - Регистрация'
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form = self.get_form()
         if form.is_valid():
-            form.clean_age()
-            form.save()
             messages.success(request, 'Вы успешно зарегистрировались!')
-            return HttpResponseRedirect(reverse('users:login'))
-    else:
-        form = UserRegistrationForm()
-    context = {'title': 'GeekShop - Регистрация', 'form': form}
-    return render(request, 'users/register.html', context)
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 
 @login_required
@@ -87,3 +93,17 @@ def logout(request):
 #         'form': form,
 #     }
 #     return render(request, 'users/login.html', context)
+
+
+# def registration(request):
+#     if request.method == 'POST':
+#         form = UserRegistrationForm(data=request.POST)
+#         if form.is_valid():
+#             form.clean_age()
+#             form.save()
+#             messages.success(request, 'Вы успешно зарегистрировались!')
+#             return HttpResponseRedirect(reverse('users:login'))
+#     else:
+#         form = UserRegistrationForm()
+#     context = {'title': 'GeekShop - Регистрация', 'form': form}
+#     return render(request, 'users/register.html', context)
