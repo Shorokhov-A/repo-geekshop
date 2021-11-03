@@ -30,6 +30,13 @@ class ProductsListView(ListView):
         context['categories'] = ProductCategory.objects.all()
         return context
 
+    def get_queryset(self):
+        if not self.kwargs.get('category'):
+            # self.kwargs['category'] = 'all'
+            return Product.objects.all()
+        self.category = get_object_or_404(ProductCategory, id=self.kwargs['category'])
+        return Product.objects.filter(category=self.category)
+
 
 def products(request, category_id=None, page=1):
     context = {
