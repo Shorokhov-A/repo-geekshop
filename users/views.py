@@ -61,7 +61,8 @@ class ProfileUpdateView(UpdateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        self.success_url = self.request.META['HTTP_REFERER']
+        self.success_url = reverse('users:profile', kwargs={'pk': self.kwargs.get('pk')})
+        # self.success_url = self.request.META['HTTP_REFERER']
         return super().post(request, *args, **kwargs)
 
     @method_decorator(user_passes_test(lambda u: u.is_authenticated))
