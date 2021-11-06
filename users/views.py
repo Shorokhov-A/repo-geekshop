@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.mail import send_mail
 from django.shortcuts import HttpResponseRedirect
 from django.views.generic.edit import FormView, CreateView, UpdateView
 from django.urls import reverse, reverse_lazy
@@ -45,8 +47,13 @@ class RegistrationCreateView(CreateView):
         return context
 
     def form_valid(self, form):
-        messages.success(self.request, 'Вы успешно зарегистрировались!')
-        return super().form_valid(form)
+        super().form_valid(form)
+        user = self.object
+        if send_verify_message(user):
+            messages.success(self.request, 'Сообщение подтверждения отправлено')
+        else:
+            messages.error(self.request, 'Ошибка отправки сообщения')
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class ProfileUpdateView(UpdateView):
@@ -77,6 +84,14 @@ class ProfileUpdateView(UpdateView):
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect(reverse('index'))
+
+
+def send_verify_message(user):
+    verify_link = reverse('users:verify', args=[user.email, user.activation_key])
+    title = f'Подтверждение учётной записи {user.username}'
+    message = f'Для подтверждения учётной записи {user.username} на портале ' \
+              f'{settings.DOMAIN_NAME} перейдите по ссылке: {settings.DOMAIN_NAME}{verify_link}'
+    return send_mail(title, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
 
 
 # def login(request):
