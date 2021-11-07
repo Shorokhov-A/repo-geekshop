@@ -9,7 +9,6 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
 
 from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
-from baskets.models import Basket
 from users.models import User
 
 
@@ -88,7 +87,6 @@ class ProfileUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(ProfileUpdateView, self).get_context_data(**kwargs)
         context['title'] = 'GeekShop - Профиль'
-        context['baskets'] = Basket.objects.filter(user_id=self.kwargs.get('pk'))
         return context
 
     def post(self, request, *args, **kwargs):
