@@ -12,8 +12,10 @@ class IndexTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexTemplateView, self).get_context_data(**kwargs)
-        context['title'] = 'GeekShop'
-        context['header'] = 'GeekShop Store'
+        context.update({
+            'title': 'GeekShop',
+            'header': 'GeekShop Store',
+        })
         return context
 
 
@@ -25,9 +27,11 @@ class ProductsListView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ProductsListView, self).get_context_data(**kwargs)
-        context['title'] = 'GeekShop - Каталог'
-        context['header'] = 'GeekShop'
-        context['categories'] = ProductCategory.objects.all()
+        context.update({
+            'title': 'GeekShop - Каталог',
+            'header': 'GeekShop',
+            'categories': ProductCategory.objects.all(),
+        })
         return context
 
     def get_queryset(self):
