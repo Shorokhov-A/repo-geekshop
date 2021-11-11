@@ -31,7 +31,7 @@ class UserRegistrationForm(UserCreationForm):
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control py-4', 'placeholder': 'Подтвердите пароль'}))
     birthday = forms.DateField(widget=forms.DateInput(attrs={
-        'class': 'form-control py-4', 'placeholder': 'Дата рождения'}))
+        'class': 'form-control py-4', 'placeholder': 'Дата рождения'}), required=False)
 
     class Meta:
         model = User
@@ -53,7 +53,10 @@ class UserProfileForm(UserChangeForm):
     image = forms.ImageField(widget=forms.FileInput(attrs={'class': 'custom-file-input'}), required=False)
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control py-4', 'readonly': True}))
     email = forms.CharField(widget=forms.EmailInput(attrs={'class': 'form-control py-4', 'readonly': True}))
-    birthday = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control py-4', 'readonly': True}))
+    birthday = forms.DateField(widget=forms.DateInput(attrs={
+        'class': 'form-control py-4',
+        'readonly': True,
+    }), required=False)
 
     class Meta:
         model = User
