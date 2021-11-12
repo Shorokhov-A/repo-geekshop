@@ -4,7 +4,9 @@ from django.core.exceptions import ValidationError
 from datetime import date
 
 from users.models import User
-import random, hashlib
+from users.models import UserProfile
+import random
+import hashlib
 
 
 class UserLoginForm(AuthenticationForm):
@@ -70,3 +72,17 @@ class UserProfileForm(UserChangeForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'first_name', 'last_name', 'image', 'birthday')
+
+
+class UserProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('tagline', 'about_me', 'gender')
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfileEditForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field_name == 'gender':
+                field.widget.attrs['class'] = 'form-control'
+            else:
+                field.widget.attrs['class'] = 'form-control py-4'
