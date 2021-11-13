@@ -1,6 +1,6 @@
 from django.urls import path
 
-from users.views import LoginFormView, RegistrationCreateView, ProfileUpdateView, logout
+from users.views import LoginFormView, RegistrationCreateView, ProfileUpdateView, logout, verify
 
 app_name = 'users'
 
@@ -9,4 +9,5 @@ urlpatterns = [
     path('registration/', RegistrationCreateView.as_view(), name='registration'),
     path('profile/<int:pk>/', ProfileUpdateView.as_view(), name='profile'),
     path('logout/', logout, name='logout'),
+    path('verify/<str:email>/<str:activation_key>', verify, name='verify'),
 ]
