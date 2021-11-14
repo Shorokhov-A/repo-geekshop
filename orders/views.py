@@ -96,3 +96,7 @@ class OrderDelete(DeleteView):
     model = Order
     success_url = reverse_lazy('orders:orders_list')
 
+
+class OrderRead(DetailView):
+    model = Order
+    extra_context = {'title': 'заказ/просмотр'}
