@@ -60,3 +60,34 @@ class OrderItemsCreate(CreateView):
             self.object.delete()
 
         return super(OrderItemsCreate, self).form_valid(form)
+
+
+class OrderItemsUpdate(UpdateView):
+    model = Order
+    fields = []
+    success_url = reverse_lazy('orders:orders_list')
+
+    def get_context_data(self, **kwargs):
+        data = super(OrderItemsUpdate, self).get_context_data(**kwargs)
+        order_formset = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=1)
+        if self.request.POST:
+            data['orderitems'] = order_formset(self.request.POST, instance=self.object)
+        else:
+            data['orderitems'] = order_formset(instance=self.object)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        order_items = context['orderitems']
+
+        with transaction.atomic():
+            self.object = form.save()
+            if order_items.is_valid():
+                order_items.instance = self.object
+                order_items.save()
+
+        if self.object.get_total_cost() == 0:
+            self.object.delete()
+
+        return super(OrderItemsUpdate, self).form_valid(form)
+
