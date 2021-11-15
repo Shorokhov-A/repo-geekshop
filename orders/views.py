@@ -25,10 +25,15 @@ class OrderItemsCreate(CreateView):
     def get_context_data(self, **kwargs):
         data = super(OrderItemsCreate, self).get_context_data(**kwargs)
         order_formset = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=1)
+        total_quantity = None
+        total_sum = None
         if self.request.POST:
             formset = order_formset(self.request.POST)
         else:
             basket_items = Basket.objects.filter(user=self.request.user)
+            if basket_items:
+                total_quantity = basket_items[0].total_quantity()
+                total_sum = basket_items[0].total_sum()
             if len(basket_items):
                 order_formset = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=len(basket_items))
                 formset = order_formset()
@@ -37,12 +42,14 @@ class OrderItemsCreate(CreateView):
                         'product': basket_items[num].product,
                         'quantity': basket_items[num].quantity,
                     })
-                    # form.initial['product'] = basket_items[num].product
-                    # form.initial['quantity'] = basket_items[num].quantity
                 basket_items.delete()
             else:
                 formset = order_formset()
-        data['orderitems'] = formset
+        data.update({
+            'orderitems': formset,
+            'total_sum': total_sum,
+            'total_quantity': total_quantity,
+        })
         return data
 
     def form_valid(self, form):
