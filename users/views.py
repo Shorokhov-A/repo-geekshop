@@ -1,8 +1,9 @@
 from django.conf import settings
+from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
 from django.shortcuts import render, HttpResponseRedirect
-from django.views.generic.edit import FormView, CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse, reverse_lazy
 from django.contrib import auth
 from django.contrib import messages
@@ -37,27 +38,10 @@ def verify(request, email, activation_key):
         return render(request, 'products/index.html')
 
 
-class LoginFormView(FormView):
-    form_class = UserLoginForm
+class UserLoginView(LoginView):
     template_name = 'users/login.html'
-    success_url = reverse_lazy('index')
-
-    def get_context_data(self, **kwargs):
-        context = super(LoginFormView, self).get_context_data(**kwargs)
-        context['title'] = 'GeekShop - Авторизация'
-        return context
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            username = request.POST['username']
-            password = request.POST['password']
-            user = auth.authenticate(username=username, password=password)
-            if user and user.is_active:
-                auth.login(request, user)
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+    form_class = UserLoginForm
+    extra_context = {'title': 'GeekShop - Авторизация'}
 
 
 class RegistrationCreateView(CreateView):

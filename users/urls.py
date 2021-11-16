@@ -1,11 +1,11 @@
 from django.urls import path
 
-from users.views import LoginFormView, RegistrationCreateView, ProfileUpdateView, logout, verify
+from users.views import UserLoginView, RegistrationCreateView, ProfileUpdateView, logout, verify
 
 app_name = 'users'
 
 urlpatterns = [
-    path('login/', LoginFormView.as_view(), name='login'),
+    path('login/', UserLoginView.as_view(), name='login'),
     path('registration/', RegistrationCreateView.as_view(), name='registration'),
     path('profile/<int:pk>/', ProfileUpdateView.as_view(), name='profile'),
     path('logout/', logout, name='logout'),
