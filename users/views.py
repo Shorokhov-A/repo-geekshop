@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
 from django.shortcuts import render, HttpResponseRedirect
@@ -93,9 +93,8 @@ class ProfileUpdateView(SuccessMessageMixin, UpdateView):
         return super().form_valid(form)
 
 
-def logout(request):
-    auth.logout(request)
-    return HttpResponseRedirect(reverse('index'))
+class UserLogoutView(LogoutView):
+    pass
 
 
 # def login(request):
@@ -148,3 +147,8 @@ def logout(request):
 #         'baskets': Basket.objects.filter(user=user),
 #     }
 #     return render(request, 'users/profile.html', context)
+
+
+# def logout(request):
+#     auth.logout(request)
+#     return HttpResponseRedirect(reverse('index'))
