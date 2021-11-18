@@ -43,6 +43,7 @@ class OrderItemsCreate(CreateView):
                     form.initial.update({
                         'product': basket_items[num].product,
                         'quantity': basket_items[num].quantity,
+                        'price': basket_items[num].product.price,
                     })
                 basket_items.delete()
             else:
@@ -82,7 +83,11 @@ class OrderItemsUpdate(UpdateView):
         if self.request.POST:
             data['orderitems'] = order_formset(self.request.POST, instance=self.object)
         else:
-            data['orderitems'] = order_formset(instance=self.object)
+            formset = order_formset(instance=self.object)
+            for form in formset.forms:
+                if form.instance.pk:
+                    form.initial['price'] = form.instance.product.price
+            data['orderitems'] = formset
         return data
 
     def form_valid(self, form):
