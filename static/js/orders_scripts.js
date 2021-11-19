@@ -73,7 +73,17 @@ window.onload = function () {
     });
 
     $('.order_form select').change(function () {
-        let target = event.target;
+        let target = event.target,
+            item_num;
         console.log(target);
+        item_num = parseInt(target.name.replace('orderitems-', '').replace('-product', ''));
+
+        $.ajax({
+            url: '/products/item/' + target.value + '/',
+            success: function (data) {
+                console.log(data.result, item_num);
+                $('.orderitems-' + item_num + '-price').html(data.result.replace('.', ','));
+            },
+        });
     });
 };
