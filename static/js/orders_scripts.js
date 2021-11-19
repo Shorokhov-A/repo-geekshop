@@ -73,7 +73,20 @@ window.onload = function () {
     });
 
     $('.order_form select').change(function () {
-        let target = event.target;
+        let target = event.target,
+            item_num;
         console.log(target);
+        item_num = parseInt(target.name.replace('orderitems-', '').replace('-product', ''));
+
+        $.ajax({
+            url: '/products/item/' + target.value + '/',
+            success: function (data) {
+                console.log(data.result, item_num);
+                $('.orderitems-' + item_num + '-price').html(data.result.replace('.', ','));
+                price_arr[item_num] = data.result;
+                quantity_arr[item_num] = 1;
+                orderSummaryUpdate(price_arr[item_num], quantity_arr[item_num]);
+            },
+        });
     });
 };

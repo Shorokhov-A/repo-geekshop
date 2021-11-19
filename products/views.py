@@ -1,4 +1,6 @@
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 
@@ -39,6 +41,13 @@ class ProductsListView(ListView):
             category = get_object_or_404(ProductCategory, id=self.kwargs['category'])
             return Product.objects.filter(category=category)
         return Product.objects.all()
+
+
+def get_product_price(request, product_id):
+    if request.is_ajax():
+        product = Product.objects.get(id=product_id)
+        return JsonResponse({'result': product.price})
+    return HttpResponseRedirect(reverse('index'))
 
 
 # def index(request):
