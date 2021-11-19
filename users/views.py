@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
 from django.shortcuts import render, HttpResponseRedirect
 from django.views.generic.edit import FormView, CreateView, UpdateView
@@ -8,7 +9,7 @@ from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
 
-from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
+from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm, UserProfileEditForm
 from users.models import User
 
 
@@ -26,10 +27,10 @@ def verify(request, email, activation_key):
         if user.activation_key == activation_key and not user.is_activation_key_expired():
             user.is_active = True
             user.save()
-            auth.login(request, user)
+            auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return render(request, 'users/verification.html')
         else:
-            print (f' Error activation user {user}')
+            print(f' Error activation user {user}')
             return render(request, 'users/verification.html')
     except Exception as e:
         print(f' Error activation user {e.args}')
@@ -79,27 +80,32 @@ class RegistrationCreateView(CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ProfileUpdateView(UpdateView):
+class ProfileUpdateView(SuccessMessageMixin, UpdateView):
     model = User
     template_name = 'users/profile.html'
     form_class = UserProfileForm
+    success_message = 'Изменения сохранены!'
 
     def get_context_data(self, **kwargs):
         context = super(ProfileUpdateView, self).get_context_data(**kwargs)
-        context['title'] = 'GeekShop - Профиль'
+        context.update({
+            'title': 'GeekShop - Профиль',
+            'user_profile': UserProfileEditForm(instance=self.object.userprofile),
+        })
         return context
 
-    def post(self, request, *args, **kwargs):
-        self.success_url = reverse('users:profile', kwargs={'pk': self.kwargs.get('pk')})
-        # self.success_url = self.request.META['HTTP_REFERER']
-        return super().post(request, *args, **kwargs)
+    def get_success_url(self):
+        return reverse_lazy('users:profile', args=(self.object.id,))
 
     @method_decorator(user_passes_test(lambda u: u.is_authenticated))
     def dispatch(self, request, *args, **kwargs):
         return super(ProfileUpdateView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        messages.success(self.request, 'Изменения сохранены!')
+        if self.request.method == 'POST':
+            user_profile = UserProfileEditForm(instance=self.object.userprofile, data=self.request.POST)
+            if user_profile.is_valid():
+                return super().form_valid(form)
         return super().form_valid(form)
 
 
