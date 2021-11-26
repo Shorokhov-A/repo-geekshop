@@ -37,9 +37,25 @@
                 </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'users:profile' user.id %}">{{ user.first_name }} {{ user.last_name }}
-                            <i class="fas fa-user-circle"></i>
-                        </a>
+                        <div class="dropdown">
+                            <a class="nav-link"
+                               href="" data-toggle="dropdown">{{ user.first_name|default:'Пользователь' }} {{ user.last_name }}
+                                <i class="fas fa-user-circle"></i>
+                                <span class="dropdown-toggle"></span>
+                            </a>
+                            <ul class="dropdown-menu bg-dark">
+                                <li class="dropdown-item bg-dark">
+                                    <a class="nav-link" href="{% url 'users:profile' user.id %}">
+                                        профиль
+                                    </a>
+                                </li>
+                                <li class="dropdown-item bg-dark">
+                                    <a class="nav-link" href="{% url 'orders:orders_list' %}">
+                                        заказы
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                     {% if user.is_stuff or user.is_superuser %}
                         <li class="nav-item">
