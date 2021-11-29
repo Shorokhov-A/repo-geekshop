@@ -75,6 +75,7 @@ window.onload = function () {
         removed: deleteOrderItem,
     });
 
+
     if (!order_total_quantity) {
         orderSummaryRecalc();
     }

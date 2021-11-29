@@ -43,6 +43,13 @@ class ProductsListView(ListView):
         return Product.objects.all()
 
 
+def get_product_price(request, product_id):
+    if request.is_ajax():
+        product = Product.objects.get(id=product_id)
+        return JsonResponse({'result': product.price})
+    return HttpResponseRedirect(reverse('index'))
+
+
 # def index(request):
 #     context = {
 #         'title': 'GeekShop',
